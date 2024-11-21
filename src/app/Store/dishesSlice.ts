@@ -44,6 +44,24 @@ export const addDish = createAsyncThunk(
   }
 );
 
+export const updateDish = createAsyncThunk(
+  "dishes/updateDish",
+  async ({
+    id,
+    title,
+    price,
+    image,
+  }: {
+    id: string;
+    title: string;
+    price: number;
+    image: string;
+  }) => {
+    await axiosApi.put(`/dishes/${id}.json`, { title, price, image });
+    return { id, title, price, image };
+  }
+);
+
 const dishesSlice = createSlice({
   name: "dishes",
   initialState,
@@ -65,6 +83,14 @@ const dishesSlice = createSlice({
       })
       .addCase(addDish.fulfilled, (state, action) => {
         state.items.push(action.payload);
+      })
+      .addCase(updateDish.fulfilled, (state, action) => {
+        const index = state.items.findIndex(
+          (dish) => dish.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       });
   },
 });

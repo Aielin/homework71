@@ -1,21 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/Store/store";
 import { addDish } from "../../app/Store/dishesSlice";
+import { updateDish } from "../../app/Store/dishesSlice";
 
-const DishForm: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState(0);
-  const [image, setImage] = useState('');
+interface DishFormProps {
+  dish?: {
+    id: string;
+    title: string;
+    price: number;
+    image: string;
+  } | null;
+  onClose: () => void;
+}
+
+
+const DishForm: React.FC<DishFormProps> = ({ dish, onClose }) => {
+  const [title, setTitle] = useState(dish ? dish.title : '');
+  const [price, setPrice] = useState(dish ? dish.price : 0);
+  const [image, setImage] = useState(dish ? dish.image : '');
 
   const dispatch = useDispatch<AppDispatch>();
 
+  useEffect(() => {
+    if (dish) {
+      setTitle(dish.title);
+      setPrice(dish.price);
+      setImage(dish.image);
+    }
+  }, [dish]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addDish({ title, price, image }));
+    if (dish) {
+      dispatch(updateDish({ id: dish.id, title, price, image }));
+    } else {
+      dispatch(addDish({ title, price, image }));
+    }
     setTitle('');
     setPrice(0);
     setImage('');
+    onClose();
   };
 
   return (
