@@ -21,6 +21,7 @@ export const fetchOrders = createAsyncThunk(
   'orders/fetchOrders',
   async () => {
     const response = await axiosApi.get('/orders.json');
+    console.log("Orders response:", response.data);
     const data = response.data;
     return Object.keys(data).map((id) => ({
       id,
