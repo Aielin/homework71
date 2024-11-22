@@ -21,12 +21,20 @@ export const fetchOrders = createAsyncThunk(
   'orders/fetchOrders',
   async () => {
     const response = await axiosApi.get('/orders.json');
-    console.log("Orders response:", response.data);
     const data = response.data;
     return Object.keys(data).map((id) => ({
       id,
-      ...data[id],
+      items: data[id].items,
+      total: data[id].total,
     }));
+  }
+);
+
+export const completeOrder = createAsyncThunk(
+  'orders/completeOrder',
+  async (orderId: string) => {
+    await axiosApi.delete(`/orders/${orderId}.json`);
+    return orderId;
   }
 );
 
